@@ -1,7 +1,7 @@
 import type { Context } from "@netlify/edge-functions";
 
 // === Configuration ===
-const DIFFICULTY = 5; 
+const DIFFICULTY = 5;
 const SECRET_KEY = "NETLIFY_ALBIREO_SECRET_KEY_CHANGE_ME"; // ★ 請務必修改這裡
 const BOT_AGENTS = ["google", "bingbot", "yahoo", "duckduckbot"];
 
@@ -32,74 +32,81 @@ async function checkPoW(challenge: string, nonce: string, response: string, diff
 }
 
 // === HTML Generator ===
-const GENERATE_HTML = (challenge: string) => `
+const GENERATE_HTML = (challenge: string, originalPath: string) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>Security Check | Albireo</title>
-  <style>
-    :root { --primary: #00ad9f; --bg: #f4f6f8; --card: #ffffff; --text: #2d3748; }
-    @media (prefers-color-scheme: dark) { :root { --bg: #121212; --card: #1e1e1e; --text: #ffffff; } }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-    .box { background: var(--card); padding: 40px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
-    .mascot { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--card); box-shadow: 0 0 0 4px var(--primary); margin-bottom: 20px; }
-    h1 { margin-bottom: 10px; }
-    button { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-top: 20px; width: 100%; }
-    button:disabled { opacity: 0.7; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Security Check | Albireo</title>
+<style>
+:root { --primary: #00ad9f; --bg: #f4f6f8; --card: #ffffff; --text: #2d3748; }
+@media (prefers-color-scheme: dark) { :root { --bg: #121212; --card: #1e1e1e; --text: #ffffff; } }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+.box { background: var(--card); padding: 40px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
+.mascot { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--card); box-shadow: 0 0 0 4px var(--primary); margin-bottom: 20px; }
+h1 { margin-bottom: 10px; }
+button { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-top: 20px; width: 100%; }
+button:disabled { opacity: 0.7; }
+</style>
 </head>
 <body>
-  <div class="box">
-    <img src="/anubis-dist/img/pensive.webp" class="mascot" id="mascot-img" alt="Guard">
-    <h1>Security Check</h1>
-    <p>Please verify you are human.</p>
-    <button id="verify-btn">I am human</button>
-  </div>
-  <script>
-    const CHALLENGE = "${challenge}";
-    const DIFFICULTY = ${DIFFICULTY};
-    const IMG_CHECK = "/anubis-dist/img/pensive.webp";
-    const IMG_SUCCESS = "/anubis-dist/img/happy.webp";
-    const IMG_FAILED = "/anubis-dist/img/reject.webp";
-    const btn = document.getElementById('verify-btn');
-    const img = document.getElementById('mascot-img');
+<div class="box">
+<img src="/anubis-dist/img/pensive.webp" class="mascot" id="mascot-img" alt="Guard">
+<h1>Security Check</h1>
+<p>Please verify you are human.</p>
+<button id="verify-btn">I am human</button>
+</div>
+<script>
+const CHALLENGE = "${challenge}";
+const DIFFICULTY = ${DIFFICULTY};
+const ORIGINAL_PATH = "${originalPath}";
+const IMG_CHECK = "/anubis-dist/img/pensive.webp";
+const IMG_SUCCESS = "/anubis-dist/img/happy.webp";
+const IMG_FAILED = "/anubis-dist/img/reject.webp";
+const btn = document.getElementById('verify-btn');
+const img = document.getElementById('mascot-img');
 
-    async function sha256(str) {
-      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
+async function sha256(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
-    async function mine() {
-      btn.disabled = true; btn.innerText = 'Calculating...'; img.src = IMG_CHECK; 
-      const prefix = "0".repeat(DIFFICULTY);
-      let nonce = 0;
-      while(true) {
-        if (nonce % 1000 === 0) await new Promise(r => setTimeout(r, 0));
-        const hash = await sha256(CHALLENGE + nonce);
-        if (hash.startsWith(prefix)) { submit(nonce, hash); break; }
-        nonce++;
-      }
-    }
+async function mine() {
+  btn.disabled = true; btn.innerText = 'Calculating...'; img.src = IMG_CHECK;
+  const prefix = "0".repeat(DIFFICULTY);
+  let nonce = 0;
+  while(true) {
+    if (nonce % 1000 === 0) await new Promise(r => setTimeout(r, 0));
+    const hash = await sha256(CHALLENGE + nonce);
+    if (hash.startsWith(prefix)) { submit(nonce, hash); break; }
+    nonce++;
+  }
+}
 
-    function submit(nonce, response) {
-      btn.innerText = 'Verifying...';
-      const fd = new FormData();
-      fd.append('nonce', nonce); fd.append('response', response); fd.append('verify', 'true');
-      fetch(window.location.href, { method: 'POST', body: fd }).then(async res => {
-        if (res.ok) {
-          img.src = IMG_SUCCESS; btn.innerText = 'Success!';
-          setTimeout(() => window.location.replace(window.location.href), 500);
-        } else {
-          img.src = IMG_FAILED; btn.innerText = 'Retry'; btn.disabled = false;
-        }
-      }).catch(() => { img.src = IMG_FAILED; btn.innerText = 'Error'; btn.disabled = false; });
+function submit(nonce, response) {
+  btn.innerText = 'Verifying...';
+  const fd = new FormData();
+  fd.append('nonce', nonce);
+  fd.append('response', response);
+  fd.append('verify', 'true');
+  fd.append('original_path', ORIGINAL_PATH);
+
+  fetch(window.location.href, { method: 'POST', body: fd }).then(async res => {
+    if (res.ok) {
+      const data = await res.json();
+      img.src = IMG_SUCCESS; btn.innerText = 'Success!';
+  setTimeout(() => { window.location.href = data.redirect; }, 500);
+    } else {
+      img.src = IMG_FAILED; btn.innerText = 'Retry'; btn.disabled = false;
     }
-    btn.addEventListener('click', mine);
-  </script>
+  }).catch(() => { img.src = IMG_FAILED; btn.innerText = 'Error'; btn.disabled = false; });
+}
+
+btn.addEventListener('click', mine);
+</script>
 </body>
 </html>
 `;
@@ -113,11 +120,11 @@ export default async (request: Request, context: Context) => {
   const url = new URL(request.url);
   const ua = (request.headers.get("User-Agent") || "").toLowerCase();
 
-  // 1. Pass static assets
-  if (url.pathname.match(/\.(png|jpg|jpeg|gif|webp|css|js|ico|svg|json)$/) || url.pathname.startsWith("/anubis-dist/")) {
+  // 1. Pass static assets（含 xml, rss, atom）
+  if (url.pathname.match(/\.(png|jpg|jpeg|gif|webp|css|js|ico|svg|json|xml|rss|atom)$/) || url.pathname.startsWith("/anubis-dist/")) {
     return context.next();
   }
-  
+
   // 2. Pass SEO bots
   if (BOT_AGENTS.some(b => ua.includes(b))) return context.next();
 
@@ -133,7 +140,8 @@ export default async (request: Request, context: Context) => {
 
       const nonce = fd.get("nonce") as string;
       const response = fd.get("response") as string;
-      
+      const originalPath = fd.get("original_path") as string || "/";
+
       const cStr = cookie.split(';').find(c => c.trim().startsWith('anubis_challenge='));
       if (!cStr) return new Response("Expired", { status: 403 });
 
@@ -144,8 +152,9 @@ export default async (request: Request, context: Context) => {
 
       const headers = new Headers();
       headers.append("Set-Cookie", "anubis_solved=true; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400");
-      
-      return new Response(JSON.stringify({ success: true }), { status: 200, headers });
+      headers.set("Content-Type", "application/json");
+
+      return new Response(JSON.stringify({ success: true, redirect: originalPath }), { status: 200, headers });
     } catch (e) {
       return new Response("Server Error", { status: 500 });
     }
@@ -154,10 +163,12 @@ export default async (request: Request, context: Context) => {
   // 5. Issue Challenge
   const rnd = crypto.randomUUID().replace(/-/g, '');
   const sig = await sign(rnd);
+  const originalPath = url.pathname + url.search + url.hash;
+
   const headers = new Headers();
   headers.set("Content-Type", "text/html");
   headers.set("Cache-Control", "private, no-cache, no-store, must-revalidate");
   headers.set("Set-Cookie", `anubis_challenge=${encodeURIComponent(rnd + '.' + sig)}; Path=/; HttpOnly; Secure; SameSite=Lax`);
-  
-  return new Response(GENERATE_HTML(rnd), { headers });
+
+  return new Response(GENERATE_HTML(rnd, originalPath), { headers });
 };

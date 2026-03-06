@@ -31,6 +31,15 @@ async function checkPoW(challenge: string, nonce: string, response: string, diff
   return true;
 }
 
+// === Safe Redirect Validator ===
+function safeRedirect(path: string): string {
+  try {
+    // 只允許相對路徑（以 / 開頭），拒絕任何 scheme
+    if (path.startsWith('/') && !path.startsWith('//')) return path;
+  } catch (_) {}
+  return '/';
+}
+
 // === HTML Generator ===
 const GENERATE_HTML = (challenge: string, originalPath: string) => `
 <!DOCTYPE html>
@@ -85,21 +94,51 @@ function setMascot(imgSrc, emojiChar) {
   }
 }
 
+// === Web Worker code (inline via Blob) ===
+const WORKER_CODE = \`
 async function sha256(str) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-async function mine() {
+self.onmessage = async (e) => {
+  const { challenge, difficulty, startNonce, step } = e.data;
+  const prefix = "0".repeat(difficulty);
+  let nonce = startNonce;
+  while (true) {
+    const hash = await sha256(challenge + nonce);
+    if (hash.startsWith(prefix)) {
+      self.postMessage({ found: true, nonce, hash });
+      return;
+    }
+    nonce += step;
+  }
+};
+\`;
+
+function createWorker() {
+  const blob = new Blob([WORKER_CODE], { type: 'application/javascript' });
+  return new Worker(URL.createObjectURL(blob));
+}
+
+function mine() {
   btn.disabled = true; btn.innerText = 'Calculating...';
   setMascot(IMG_CHECK, EMOJI_CHECK);
-  const prefix = "0".repeat(DIFFICULTY);
-  let nonce = 0;
-  while(true) {
-    if (nonce % 1000 === 0) await new Promise(r => setTimeout(r, 0));
-    const hash = await sha256(CHALLENGE + nonce);
-    if (hash.startsWith(prefix)) { submit(nonce, hash); break; }
-    nonce++;
+
+  const numWorkers = Math.max(1, (navigator.hardwareConcurrency || 4) - 1);
+  const workers = [];
+  let done = false;
+
+  for (let i = 0; i < numWorkers; i++) {
+    const worker = createWorker();
+    workers.push(worker);
+    worker.postMessage({ challenge: CHALLENGE, difficulty: DIFFICULTY, startNonce: i, step: numWorkers });
+    worker.onmessage = (e) => {
+      if (done) return;
+      done = true;
+      workers.forEach(w => w.terminate());
+      submit(e.data.nonce, e.data.hash);
+    };
   }
 }
 
@@ -162,7 +201,7 @@ export default async (request: Request, context: Context) => {
 
       const nonce = fd.get("nonce") as string;
       const response = fd.get("response") as string;
-      const originalPath = fd.get("original_path") as string || "/";
+      const originalPath = safeRedirect(fd.get("original_path") as string || "/");
 
       const cStr = cookie.split(';').find(c => c.trim().startsWith('anubis_challenge='));
       if (!cStr) return new Response("Expired", { status: 403 });
@@ -185,7 +224,7 @@ export default async (request: Request, context: Context) => {
   // 5. Issue Challenge
   const rnd = crypto.randomUUID().replace(/-/g, '');
   const sig = await sign(rnd);
-  const originalPath = url.pathname + url.search + url.hash;
+  const originalPath = safeRedirect(url.pathname + url.search + url.hash);
 
   const headers = new Headers();
   headers.set("Content-Type", "text/html");

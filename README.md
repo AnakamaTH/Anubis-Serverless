@@ -23,6 +23,23 @@ Albireo allows you to:
 
 ---
 
+## How does Albireo compare?
+
+| | Albireo | Anubis | Cloudflare Free | Cloudflare Pro+ |
+|---|---|---|---|---|
+| Cost | **Free** | Free | Free | $20–200+/mo |
+| Requires server | ❌ | ✅ | ❌ | ❌ |
+| Works on Netlify | ✅ | ❌ | ❌ | ❌ |
+| Proof-of-Work | ✅ | ✅ | ❌ | ✅ |
+| Blocks JS-less bots | ✅ | ✅ | ⚠️ partial | ✅ |
+| Slows headless browsers | ✅ | ✅ | ❌ | ✅ |
+| Open source | ✅ | ✅ | ❌ | ❌ |
+| Dynamic difficulty | ❌ | ✅ | ❌ | ✅ |
+
+> Cloudflare's free Bot Fight Mode relies on User-Agent and IP heuristics, which are easy to bypass. Albireo's PoW forces every client — including headless browsers — to perform real computation, making large-scale scraping expensive even for bots that can run JavaScript.
+
+---
+
 ## Setup (Cloudflare Pages)
 1. Copy the `functions` folder to your Cloudflare Pages project  
 2. Change `SECRET_KEY` in `_middleware.ts`  
@@ -53,7 +70,7 @@ Use this if your site is hosted on Netlify.
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `DIFFICULTY` | PoW difficulty (higher = more CPU cost). Recommended: 3–6 | `3 or 4` |
+| `DIFFICULTY` | PoW difficulty (higher = more CPU cost). Recommended: 3–6 | `5` |
 | `SECRET_KEY` | HMAC signing key. **Must be changed before deployment** | — |
 | `BOT_AGENTS` | List of user agent substrings to whitelist (SEO bots) | Google, Bing, Yahoo, DuckDuckBot |
 | `CHALLENGE_TTL` | How long a challenge is valid (milliseconds) | `300000` (5 min) |

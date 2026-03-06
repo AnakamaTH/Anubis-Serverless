@@ -7,7 +7,7 @@ It is **not intended to defeat highly resourced or targeted scraping operations*
 
 ## Why Albireo?
 Many static sites (GitHub Pages, Netlify, Vercel) **cannot run traditional anti-crawler systems** like Anubis, which require a server or reverse proxy.  
-(Now only support Pages and Netlify)
+(Now support Cloudflare Pages, Netlify, and Vercel)
 
 Albireo allows you to:
 - ✅ Protect your static content with PoW challenges  
@@ -30,6 +30,7 @@ Albireo allows you to:
 | Cost | **Free** | Free | Free | $20–200+/mo |
 | Requires server | ❌ | ✅ | ❌ | ❌ |
 | Works on Netlify | ✅ | ❌ | ❌ | ❌ |
+| Works on Vercel | ✅ | ❌ | ❌ | ❌ |
 | Proof-of-Work | ✅ | ✅ | ❌ | ✅ |
 | Blocks JS-less bots | ✅ | ✅ | ⚠️ partial | ✅ |
 | Slows headless browsers | ✅ | ✅ | ❌ | ✅ |
@@ -63,6 +64,19 @@ Use this if your site is hosted on Netlify.
    - Add your mascot images: `pensive.webp`, `happy.webp`, `reject.webp`.  
    > If you don't have images, the security check page will automatically fall back to emoji indicators (😐 / 😊 / ❌), so the protection works out of the box without any setup.
 4. **Deploy**: Push to your repository. Netlify will automatically detect the Edge Functions via `netlify.toml`.
+
+## Setup (Vercel)
+Use this if your site is hosted on Vercel (Next.js or other frameworks).
+Go to "For Vercel" folder
+1. **Copy File**: Copy `middleware.ts` to the **root of your project**.
+2. **Configure Secret**:
+   - Open `middleware.ts`.
+   - Find `SECRET_KEY` and change it to a random string (**Security Requirement**).
+3. **Add Images**:
+   - Create a folder `public/anubis-dist/img/` in your project.
+   - Add your mascot images: `pensive.webp`, `happy.webp`, `reject.webp`.
+   > If you don't have images, the security check page will automatically fall back to emoji indicators (😐 / 😊 / ❌), so the protection works out of the box without any setup.
+4. **Deploy**: Push to your repository. Vercel will automatically pick up `middleware.ts`.
 
 ---
 

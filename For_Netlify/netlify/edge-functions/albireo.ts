@@ -1,9 +1,23 @@
 import type { Context } from "@netlify/edge-functions";
 
 // === Configuration ===
-const DIFFICULTY = 5;
+const DIFFICULTY = 4;
 const SECRET_KEY = "NETLIFY_ALBIREO_SECRET_KEY_CHANGE_ME"; // ★ 請務必修改這裡
 const BOT_AGENTS = ["google", "bingbot", "yahoo", "duckduckbot"];
+const CHALLENGE_TTL = 5 * 60 * 1000; // Challenge 過期時間（毫秒），預設 5 分鐘
+
+// === UI Strings（可自訂語言）===
+const STRINGS = {
+  title: "Security Check | Albireo",
+  heading: "Security Check",
+  description: "Please verify you are human.",
+  btn_start: "I am human",
+  btn_calculating: "Calculating...",
+  btn_verifying: "Verifying...",
+  btn_success: "Success!",
+  btn_retry: "Retry",
+  btn_error: "Error",
+};
 
 // === Crypto Utils ===
 async function sign(msg: string): Promise<string> {
@@ -34,7 +48,6 @@ async function checkPoW(challenge: string, nonce: string, response: string, diff
 // === Safe Redirect Validator ===
 function safeRedirect(path: string): string {
   try {
-    // 只允許相對路徑（以 / 開頭），拒絕任何 scheme
     if (path.startsWith('/') && !path.startsWith('//')) return path;
   } catch (_) {}
   return '/';
@@ -48,7 +61,7 @@ const GENERATE_HTML = (challenge: string, originalPath: string) => `
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>Security Check | Albireo</title>
+<title>${STRINGS.title}</title>
 <style>
 :root { --primary: #00ad9f; --bg: #f4f6f8; --card: #ffffff; --text: #2d3748; }
 @media (prefers-color-scheme: dark) { :root { --bg: #121212; --card: #1e1e1e; --text: #ffffff; } }
@@ -67,9 +80,9 @@ button:disabled { opacity: 0.7; }
 <img src="/anubis-dist/img/pensive.webp" class="mascot" id="mascot-img" alt="Guard"
 onerror="this.style.display='none'; document.getElementById('mascot-emoji').style.display='block';">
 <div class="mascot-emoji" id="mascot-emoji">😐</div>
-<h1>Security Check</h1>
-<p>Please verify you are human.</p>
-<button id="verify-btn">I am human</button>
+<h1>${STRINGS.heading}</h1>
+<p>${STRINGS.description}</p>
+<button id="verify-btn">${STRINGS.btn_start}</button>
 </div>
 <script>
 const CHALLENGE = "${challenge}";
@@ -81,6 +94,13 @@ const IMG_FAILED = "/anubis-dist/img/reject.webp";
 const EMOJI_CHECK = "😐";
 const EMOJI_SUCCESS = "😊";
 const EMOJI_FAILED = "❌";
+const S = {
+  calculating: ${JSON.stringify(STRINGS.btn_calculating)},
+  verifying: ${JSON.stringify(STRINGS.btn_verifying)},
+  success: ${JSON.stringify(STRINGS.btn_success)},
+  retry: ${JSON.stringify(STRINGS.btn_retry)},
+  error: ${JSON.stringify(STRINGS.btn_error)},
+};
 const btn = document.getElementById('verify-btn');
 const img = document.getElementById('mascot-img');
 const emoji = document.getElementById('mascot-emoji');
@@ -122,7 +142,7 @@ function createWorker() {
 }
 
 function mine() {
-  btn.disabled = true; btn.innerText = 'Calculating...';
+  btn.disabled = true; btn.innerText = S.calculating;
   setMascot(IMG_CHECK, EMOJI_CHECK);
 
   const numWorkers = Math.max(1, (navigator.hardwareConcurrency || 4) - 1);
@@ -143,7 +163,7 @@ function mine() {
 }
 
 function submit(nonce, response) {
-  btn.innerText = 'Verifying...';
+  btn.innerText = S.verifying;
   const fd = new FormData();
   fd.append('nonce', nonce);
   fd.append('response', response);
@@ -154,15 +174,15 @@ function submit(nonce, response) {
     if (res.ok) {
       const data = await res.json();
       setMascot(IMG_SUCCESS, EMOJI_SUCCESS);
-      btn.innerText = 'Success!';
-  setTimeout(() => { window.location.href = data.redirect; }, 500);
+      btn.innerText = S.success;
+      setTimeout(() => { window.location.href = data.redirect; }, 500);
     } else {
       setMascot(IMG_FAILED, EMOJI_FAILED);
-      btn.innerText = 'Retry'; btn.disabled = false;
+      btn.innerText = S.retry; btn.disabled = false;
     }
   }).catch(() => {
     setMascot(IMG_FAILED, EMOJI_FAILED);
-    btn.innerText = 'Error'; btn.disabled = false;
+    btn.innerText = S.error; btn.disabled = false;
   });
 }
 
@@ -206,9 +226,17 @@ export default async (request: Request, context: Context) => {
       const cStr = cookie.split(';').find(c => c.trim().startsWith('anubis_challenge='));
       if (!cStr) return new Response("Expired", { status: 403 });
 
-      const [challenge, sig] = decodeURIComponent(cStr.split('=')[1].trim()).split('.');
+      const [challenge, timestamp, sig] = decodeURIComponent(cStr.split('=')[1].trim()).split('.');
 
-      if (!await verify(challenge, sig)) return new Response("Invalid Signature", { status: 403 });
+      // 驗證簽名
+      if (!await verify(challenge + '.' + timestamp, sig)) return new Response("Invalid Signature", { status: 403 });
+
+      // 驗證 challenge 是否過期
+      const issuedAt = parseInt(timestamp, 10);
+      if (isNaN(issuedAt) || Date.now() - issuedAt > CHALLENGE_TTL) {
+        return new Response("Challenge Expired", { status: 403 });
+      }
+
       if (!await checkPoW(challenge, nonce, response, DIFFICULTY)) return new Response("POW Failed", { status: 403 });
 
       const headers = new Headers();
@@ -223,13 +251,15 @@ export default async (request: Request, context: Context) => {
 
   // 5. Issue Challenge
   const rnd = crypto.randomUUID().replace(/-/g, '');
-  const sig = await sign(rnd);
+  const timestamp = Date.now().toString();
+  const payload = rnd + '.' + timestamp;
+  const sig = await sign(payload);
   const originalPath = safeRedirect(url.pathname + url.search + url.hash);
 
   const headers = new Headers();
   headers.set("Content-Type", "text/html");
   headers.set("Cache-Control", "private, no-cache, no-store, must-revalidate");
-  headers.set("Set-Cookie", `anubis_challenge=${encodeURIComponent(rnd + '.' + sig)}; Path=/; HttpOnly; Secure; SameSite=Lax`);
+  headers.set("Set-Cookie", `anubis_challenge=${encodeURIComponent(payload + '.' + sig)}; Path=/; HttpOnly; Secure; SameSite=Lax`);
 
   return new Response(GENERATE_HTML(rnd, originalPath), { headers });
 };

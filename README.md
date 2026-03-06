@@ -53,7 +53,7 @@ Use this if your site is hosted on Netlify.
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `DIFFICULTY` | PoW difficulty (higher = more CPU cost). Recommended: 3–6 | `5` |
+| `DIFFICULTY` | PoW difficulty (higher = more CPU cost). Recommended: 3–6 | `3 or 4` |
 | `SECRET_KEY` | HMAC signing key. **Must be changed before deployment** | — |
 | `BOT_AGENTS` | List of user agent substrings to whitelist (SEO bots) | Google, Bing, Yahoo, DuckDuckBot |
 | `CHALLENGE_TTL` | How long a challenge is valid (milliseconds) | `300000` (5 min) |

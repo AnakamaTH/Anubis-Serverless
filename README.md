@@ -32,7 +32,7 @@ Albireo allows you to:
    - `pensive.webp`  
    - `happy.webp`  
    - `reject.webp`  
-
+- If you don't have images, the security check page will automatically fall back to emoji indicators (😐 / 😊 / ❌), so the protection works out of the box without any setup.
 ## Setup(Netlify)
 
 Use this if your site is hosted on Netlify.
@@ -44,6 +44,7 @@ Use this if your site is hosted on Netlify.
 3. Add Images:
 - Create a folder public/anubis-dist/img/ in your project (or ensure public exists).
 - Add your mascot images: pensive.webp, happy.webp, reject.webp.
+- If you don't have images, the security check page will automatically fall back to emoji indicators (😐 / 😊 / ❌), so the protection works out of the box without any setup.
 4. Deploy: Push to your repository. Netlify will automatically detect the Edge Functions via netlify.toml.
 ---
 

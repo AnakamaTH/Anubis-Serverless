@@ -49,6 +49,7 @@ const GENERATE_HTML = (challenge: string, originalPath: string) => `
 body { background: var(--bg); color: var(--text); font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
 .box { background: var(--card); padding: 40px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
 .mascot { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--card); box-shadow: 0 0 0 4px var(--primary); margin-bottom: 20px; }
+.mascot-emoji { font-size: 80px; line-height: 1; margin-bottom: 20px; display: none; }
 h1 { margin-bottom: 10px; }
 button { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-top: 20px; width: 100%; }
 button:disabled { opacity: 0.7; }
@@ -56,7 +57,9 @@ button:disabled { opacity: 0.7; }
 </head>
 <body>
 <div class="box">
-<img src="/anubis-dist/img/pensive.webp" class="mascot" id="mascot-img" alt="Guard">
+<img src="/anubis-dist/img/pensive.webp" class="mascot" id="mascot-img" alt="Guard"
+onerror="this.style.display='none'; document.getElementById('mascot-emoji').style.display='block';">
+<div class="mascot-emoji" id="mascot-emoji">😐</div>
 <h1>Security Check</h1>
 <p>Please verify you are human.</p>
 <button id="verify-btn">I am human</button>
@@ -68,8 +71,21 @@ const ORIGINAL_PATH = "${originalPath}";
 const IMG_CHECK = "/anubis-dist/img/pensive.webp";
 const IMG_SUCCESS = "/anubis-dist/img/happy.webp";
 const IMG_FAILED = "/anubis-dist/img/reject.webp";
+const EMOJI_CHECK = "😐";
+const EMOJI_SUCCESS = "😊";
+const EMOJI_FAILED = "❌";
 const btn = document.getElementById('verify-btn');
 const img = document.getElementById('mascot-img');
+const emoji = document.getElementById('mascot-emoji');
+const usingEmoji = () => img.style.display === 'none';
+
+function setMascot(imgSrc, emojiChar) {
+  if (usingEmoji()) {
+    emoji.innerText = emojiChar;
+  } else {
+    img.src = imgSrc;
+  }
+}
 
 async function sha256(str) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
@@ -77,7 +93,8 @@ async function sha256(str) {
 }
 
 async function mine() {
-  btn.disabled = true; btn.innerText = 'Calculating...'; img.src = IMG_CHECK;
+  btn.disabled = true; btn.innerText = 'Calculating...';
+  setMascot(IMG_CHECK, EMOJI_CHECK);
   const prefix = "0".repeat(DIFFICULTY);
   let nonce = 0;
   while(true) {
@@ -99,12 +116,17 @@ function submit(nonce, response) {
   fetch(window.location.href, { method: 'POST', body: fd }).then(async res => {
     if (res.ok) {
       const data = await res.json();
-      img.src = IMG_SUCCESS; btn.innerText = 'Success!';
+      setMascot(IMG_SUCCESS, EMOJI_SUCCESS);
+      btn.innerText = 'Success!';
   setTimeout(() => { window.location.href = data.redirect; }, 500);
     } else {
-      img.src = IMG_FAILED; btn.innerText = 'Retry'; btn.disabled = false;
+      setMascot(IMG_FAILED, EMOJI_FAILED);
+      btn.innerText = 'Retry'; btn.disabled = false;
     }
-  }).catch(() => { img.src = IMG_FAILED; btn.innerText = 'Error'; btn.disabled = false; });
+  }).catch(() => {
+    setMascot(IMG_FAILED, EMOJI_FAILED);
+    btn.innerText = 'Error'; btn.disabled = false;
+  });
 }
 
 btn.addEventListener('click', mine);

@@ -111,3 +111,5 @@ const STRINGS = {
 
 ## License
 MIT (Based on [Anubis](https://github.com/TecharoHQ/anubis) by TecharoHQ)
+
+[Why I'm using Albireo not Cloudflare?](https://www.leaftechblog.cloudns.biz/2026/01/26/Myblog/)

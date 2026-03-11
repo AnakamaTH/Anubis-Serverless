@@ -193,7 +193,7 @@ btn.addEventListener('click', mine);
 `;
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  if (SECRET_KEY === "YOUR_KEY_HERE") {
+  if (SECRET_KEY === "") {
     return new Response("SECURITY ERROR: Please change SECRET_KEY in _middleware.ts", { status: 500 });
   }
 

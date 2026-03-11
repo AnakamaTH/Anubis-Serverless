@@ -65,7 +65,7 @@ const GENERATE_HTML = (challenge: string, originalPath: string, domain: string) 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<link rel="icon" href="/img/anubis/favicon.png" type="image/png" />
+<link rel="icon" href="/favicon.png" type="image/png" />
 <title>${STRINGS.title}</title>
 <link rel="preload" href="${IMG_CHECK}" as="image" />
 <style>
@@ -201,10 +201,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const url = new URL(request.url);
   const ua = (request.headers.get("User-Agent") || "").toLowerCase();
 
-  if (url.hostname.endsWith('.pages.dev')) {
-    return Response.redirect('https://anakama.xyz' + url.pathname + url.search, 301);
-  }
-
+  // 1. Pass static assets
   if (
     url.pathname.match(
       /\.(png|jpg|jpeg|gif|webp|avif|heic|heif|ico|svg|bmp|tiff|tif|css|js|mjs|jsx|ts|tsx|map|json|xml|rss|atom|txt|pdf|csv|yaml|yml|toml|woff|woff2|ttf|otf|eot|mp4|webm|ogv|mov|avi|mkv|m4v|mp3|wav|ogg|flac|aac|m4a|opus|zip|tar|gz|7z|wasm|md|markdown|htaccess|webmanifest)$/i
@@ -213,11 +210,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     return next();
   }
 
+  // 2. Pass SEO bots
   if (BOT_AGENTS.some(b => ua.includes(b))) return next();
 
+  // 3. Check Cookie
   const cookie = request.headers.get("Cookie") || "";
   if (cookie.includes("anubis_solved=true")) return next();
 
+  // 4. Handle POST
   if (request.method === "POST") {
     try {
       const fd = await request.formData();
@@ -257,6 +257,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
   }
 
+  // 5. Issue Challenge
   const rnd = crypto.randomUUID().replace(/-/g, '');
   const timestamp = Date.now().toString();
   const payload = rnd + '.' + timestamp;

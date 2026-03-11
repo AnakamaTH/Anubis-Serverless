@@ -78,22 +78,22 @@ const GENERATE_HTML = (challenge: string, originalPath: string) => `
 <body>
 <div class="box">
 <img src="/img/anubis/pensive.webp" class="mascot" id="mascot-img" alt="Guard"
-  onerror="this.onerror=null; this.src='${IMG_FALLBACK_CHECK}';">
+  onerror="this.onerror=null; this.src=${JSON.stringify(IMG_FALLBACK_CHECK)};">
 <h1>${STRINGS.heading}</h1>
 <p>${STRINGS.description}</p>
 <button id="verify-btn">${STRINGS.btn_start}</button>
 </div>
 <script>
-const CHALLENGE = "${challenge}";
+const CHALLENGE = ${JSON.stringify(challenge)};
 const DIFFICULTY = ${DIFFICULTY};
-const ORIGINAL_PATH = "${originalPath}";
+const ORIGINAL_PATH = ${JSON.stringify(originalPath)};
 const IMG_CHECK   = "/img/anubis/pensive.webp";
 const IMG_SUCCESS = "/img/anubis/happy.webp";
 const IMG_FAILED  = "/img/anubis/reject.webp";
 const FALLBACKS = {
-  check:   "${IMG_FALLBACK_CHECK}",
-  success: "${IMG_FALLBACK_SUCCESS}",
-  failed:  "${IMG_FALLBACK_FAILED}",
+  check:   ${JSON.stringify(IMG_FALLBACK_CHECK)},
+  success: ${JSON.stringify(IMG_FALLBACK_SUCCESS)},
+  failed:  ${JSON.stringify(IMG_FALLBACK_FAILED)},
 };
 const S = {
   calculating: ${JSON.stringify(STRINGS.btn_calculating)},
@@ -186,7 +186,8 @@ btn.addEventListener('click', mine);
 </script>
 <footer>
 <p>Proof-of-Work, modified version of <a href="https://anubis.techaro.lol/">Anubis</a>.</p>
-<p>Mascot design by <a href="https://bsky.app/profile/celphase.bsky.social">CELPHASE</a>.
+<!-- FIX 3: Closed missing </p> tag -->
+<p>Mascot design by <a href="https://bsky.app/profile/celphase.bsky.social">CELPHASE</a>.</p>
 <p>Copyright Anubis © 2026 Techaro.</p>
 </footer>
 </body>
@@ -202,6 +203,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const url = new URL(request.url);
   const ua = (request.headers.get("User-Agent") || "").toLowerCase();
 
+  // 1. Pass static assets
   if (
     url.pathname.match(
       /\.(png|jpg|jpeg|gif|webp|avif|heic|heif|ico|svg|bmp|tiff|tif|css|js|mjs|jsx|ts|tsx|map|json|xml|rss|atom|txt|pdf|csv|yaml|yml|toml|woff|woff2|ttf|otf|eot|mp4|webm|ogv|mov|avi|mkv|m4v|mp3|wav|ogg|flac|aac|m4a|opus|zip|tar|gz|7z|wasm|md|markdown|htaccess|webmanifest)$/i
@@ -230,7 +232,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cStr = cookie.split(';').find(c => c.trim().startsWith('anubis_challenge='));
       if (!cStr) return new Response("Expired", { status: 403 });
 
-      const [challenge, timestamp, sig] = decodeURIComponent(cStr.split('=')[1].trim()).split('.');
+      // FIX: Preserve base64 '=' padding in cookie value
+      const rawCookie = decodeURIComponent(cStr.trim().split('=').slice(1).join('='));
+      const dotIndex1 = rawCookie.indexOf('.');
+      const dotIndex2 = rawCookie.indexOf('.', dotIndex1 + 1);
+      if (dotIndex1 === -1 || dotIndex2 === -1) return new Response("Invalid Challenge", { status: 403 });
+      const challenge = rawCookie.slice(0, dotIndex1);
+      const timestamp = rawCookie.slice(dotIndex1 + 1, dotIndex2);
+      const sig = rawCookie.slice(dotIndex2 + 1);
 
       if (!await verify(challenge + '.' + timestamp, sig)) return new Response("Invalid Signature", { status: 403 });
 

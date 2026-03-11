@@ -70,6 +70,7 @@ const GENERATE_HTML = (challenge: string, originalPath: string) => `
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <link rel="icon" href="/img/anubis/favicon.png" type="image/png" />
 <title>${STRINGS.title}</title>
+<link rel="preload" href="https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/pensive.webp" as="image" />
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; } body { background: #0d0d0d; color: #e0e0e0; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; gap: 16px; } .box { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 32px; max-width: 380px; width: 100%; } .mascot { width: 100%; max-width: 256px; height: auto; display: block; } h1 { font-size: 1.25rem; font-weight: bold; color: #ffffff; text-align: center; } p { font-size: 0.85rem; color: #888; text-align: center; max-width: 300px; line-height: 1.6; } button { background: #1a0000; color: #e0e0e0; border: 1px solid #8b0000; padding: 11px 32px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; cursor: pointer; width: 100%; } button:hover:not(:disabled) { background: #8b0000; color: #ffffff; } button:disabled { opacity: 0.5; cursor: default; } footer { position: fixed; bottom: 16px; font-size: 0.75rem; color: #444; } footer a { color: #444; }
 </style>

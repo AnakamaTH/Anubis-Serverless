@@ -4,8 +4,6 @@ A **serverless Proof-of-Work (PoW) protection** for static websites on **Cloudfl
 
 It is **not intended to defeat highly resourced or targeted scraping operations**.
 
-***
-
 ## Setup
 1. Copy the `functions` folder to your Cloudflare Pages project  
 2. Change `SECRET_KEY` in `_middleware.ts`  

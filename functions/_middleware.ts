@@ -21,6 +21,11 @@ const STRINGS = {
   btn_error: "Error",
 };
 
+// Fallback image URLs (used when local /img/anubis/ assets are unavailable)
+const IMG_FALLBACK_CHECK   = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/pensive.webp";
+const IMG_FALLBACK_SUCCESS = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/happy.webp";
+const IMG_FALLBACK_FAILED  = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/reject.webp";
+
 // Crypto Utils
 async function sign(msg: string): Promise<string> {
   const enc = new TextEncoder();
@@ -72,7 +77,7 @@ const GENERATE_HTML = (challenge: string, originalPath: string) => `
 <body>
 <div class="box">
 <img src="/img/anubis/pensive.webp" class="mascot" id="mascot-img" alt="Guard"
-  onerror="this.onerror=null; this.src='${IMG_CHECK_FALLBACK}';">
+  onerror="this.onerror=null; this.src='${IMG_FALLBACK_CHECK}';">
 <h1>${STRINGS.heading}</h1>
 <p>${STRINGS.description}</p>
 <button id="verify-btn">${STRINGS.btn_start}</button>
@@ -81,18 +86,20 @@ const GENERATE_HTML = (challenge: string, originalPath: string) => `
 const CHALLENGE = "${challenge}";
 const DIFFICULTY = ${DIFFICULTY};
 const ORIGINAL_PATH = "${originalPath}";
-const IMG_CHECK = "/img/anubis/pensive.webp";
+const IMG_CHECK   = "/img/anubis/pensive.webp";
 const IMG_SUCCESS = "/img/anubis/happy.webp";
-const IMG_FAILED = "/img/anubis/reject.webp";
-const IMG_CHECK_FALLBACK = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/pensive.webp";
-const IMG_SUCCESS_FALLBACK = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/happy.webp";
-const IMG_FAILED_FALLBACK = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/reject.webp";
+const IMG_FAILED  = "/img/anubis/reject.webp";
+const FALLBACKS = {
+  check:   "${IMG_FALLBACK_CHECK}",
+  success: "${IMG_FALLBACK_SUCCESS}",
+  failed:  "${IMG_FALLBACK_FAILED}",
+};
 const S = {
   calculating: ${JSON.stringify(STRINGS.btn_calculating)},
-  verifying: ${JSON.stringify(STRINGS.btn_verifying)},
-  success: ${JSON.stringify(STRINGS.btn_success)},
-  retry: ${JSON.stringify(STRINGS.btn_retry)},
-  error: ${JSON.stringify(STRINGS.btn_error)},
+  verifying:   ${JSON.stringify(STRINGS.btn_verifying)},
+  success:     ${JSON.stringify(STRINGS.btn_success)},
+  retry:       ${JSON.stringify(STRINGS.btn_retry)},
+  error:       ${JSON.stringify(STRINGS.btn_error)},
 };
 const btn = document.getElementById('verify-btn');
 const img = document.getElementById('mascot-img');
@@ -101,7 +108,7 @@ function setMascot(imgSrc, fallbackSrc) {
   img.onerror = () => { img.onerror = null; img.src = fallbackSrc; };
   img.src = imgSrc;
 }
-  
+
 // Web Worker code (inline via Blob)
 const WORKER_CODE = \`
 async function sha256(str) {
@@ -193,13 +200,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const url = new URL(request.url);
   const ua = (request.headers.get("User-Agent") || "").toLowerCase();
 
-if (
-  url.pathname.match(
-    /\.(png|jpg|jpeg|gif|webp|avif|heic|heif|ico|svg|bmp|tiff|tif|css|js|mjs|jsx|ts|tsx|map|json|xml|rss|atom|txt|pdf|csv|yaml|yml|toml|woff|woff2|ttf|otf|eot|mp4|webm|ogv|mov|avi|mkv|m4v|mp3|wav|ogg|flac|aac|m4a|opus|zip|tar|gz|7z|wasm|md|markdown|htaccess|webmanifest)$/i
-  )
-) {
-  return next();
-}
+  if (
+    url.pathname.match(
+      /\.(png|jpg|jpeg|gif|webp|avif|heic|heif|ico|svg|bmp|tiff|tif|css|js|mjs|jsx|ts|tsx|map|json|xml|rss|atom|txt|pdf|csv|yaml|yml|toml|woff|woff2|ttf|otf|eot|mp4|webm|ogv|mov|avi|mkv|m4v|mp3|wav|ogg|flac|aac|m4a|opus|zip|tar|gz|7z|wasm|md|markdown|htaccess|webmanifest)$/i
+    )
+  ) {
+    return next();
+  }
 
   // 2. Pass SEO bots
   if (BOT_AGENTS.some(b => ua.includes(b))) return next();
@@ -223,10 +230,8 @@ if (
 
       const [challenge, timestamp, sig] = decodeURIComponent(cStr.split('=')[1].trim()).split('.');
 
-      // 驗證簽名
       if (!await verify(challenge + '.' + timestamp, sig)) return new Response("Invalid Signature", { status: 403 });
 
-      // 驗證 challenge 是否過期
       const issuedAt = parseInt(timestamp, 10);
       if (isNaN(issuedAt) || Date.now() - issuedAt > CHALLENGE_TTL) {
         return new Response("Challenge Expired", { status: 403 });

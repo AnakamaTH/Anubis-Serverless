@@ -185,6 +185,7 @@ btn.addEventListener('click', mine);
 </script>
 <footer>
 <p>Proof-of-Work, modified version of <a href="https://anubis.techaro.lol/">Anubis</a>.</p>
+<p>Mascot design by <a href="https://bsky.app/profile/celphase.bsky.social">CELPHASE</a>.
 <p>Copyright Anubis © 2026 Techaro.</p>
 </footer>
 </body>

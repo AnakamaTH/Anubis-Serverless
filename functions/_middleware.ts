@@ -2,15 +2,15 @@ interface Env {
   ASSETS: Fetcher;
 }
 
-// === Configuration ===
-const DIFFICULTY = 3; // 可調整難度：數字越大越慢，建議 3~6
-const SECRET_KEY = "ALBIREO_DEFAULT_SECRET_KEY_CHANGE_ME"; // ★ 請務必修改這裡
+// Configuration
+const DIFFICULTY = 3;
+const SECRET_KEY = "YOUR_KEY_HERE";
 const BOT_AGENTS = ["google", "bingbot", "yahoo", "duckduckbot"];
-const CHALLENGE_TTL = 5 * 60 * 1000; // Challenge 過期時間（毫秒），預設 5 分鐘
+const CHALLENGE_TTL = 5 * 60 * 1000;
 
-// === UI Strings（可自訂語言）===
+// UI Strings
 const STRINGS = {
-  title: "Security Check | Albireo",
+  title: "Security Check",
   heading: "Security Check",
   description: "Please verify you are human.",
   btn_start: "I am human",
@@ -21,7 +21,7 @@ const STRINGS = {
   btn_error: "Error",
 };
 
-// === Crypto Utils ===
+// Crypto Utils
 async function sign(msg: string): Promise<string> {
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey("raw", enc.encode(SECRET_KEY), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
@@ -47,7 +47,7 @@ async function checkPoW(challenge: string, nonce: string, response: string, diff
   return true;
 }
 
-// === Safe Redirect Validator ===
+// Safe Redirect Validator
 function safeRedirect(path: string): string {
   try {
     if (path.startsWith('/') && !path.startsWith('//')) return path;
@@ -55,7 +55,7 @@ function safeRedirect(path: string): string {
   return '/';
 }
 
-// === HTML Generator ===
+// HTML Generator
 const GENERATE_HTML = (challenge: string, originalPath: string) => `
 <!DOCTYPE html>
 <html lang="en">
@@ -63,25 +63,16 @@ const GENERATE_HTML = (challenge: string, originalPath: string) => `
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<link rel="icon" href="/img/anubis/favicon.png" type="image/png" />
 <title>${STRINGS.title}</title>
 <style>
-:root { --primary: #00ad9f; --bg: #f4f6f8; --card: #ffffff; --text: #2d3748; }
-@media (prefers-color-scheme: dark) { :root { --bg: #121212; --card: #1e1e1e; --text: #ffffff; } }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-.box { background: var(--card); padding: 40px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
-.mascot { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--card); box-shadow: 0 0 0 4px var(--primary); margin-bottom: 20px; }
-.mascot-emoji { font-size: 80px; line-height: 1; margin-bottom: 20px; display: none; }
-h1 { margin-bottom: 10px; }
-button { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-top: 20px; width: 100%; }
-button:disabled { opacity: 0.7; }
+* { box-sizing: border-box; margin: 0; padding: 0; } body { background: #0d0d0d; color: #e0e0e0; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; gap: 16px; } .box { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 32px; max-width: 380px; width: 100%; } .mascot { width: 100%; max-width: 256px; height: auto; display: block; } h1 { font-size: 1.25rem; font-weight: bold; color: #ffffff; text-align: center; } p { font-size: 0.85rem; color: #888; text-align: center; max-width: 300px; line-height: 1.6; } button { background: #1a0000; color: #e0e0e0; border: 1px solid #8b0000; padding: 11px 32px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; cursor: pointer; width: 100%; } button:hover:not(:disabled) { background: #8b0000; color: #ffffff; } button:disabled { opacity: 0.5; cursor: default; } footer { position: fixed; bottom: 16px; font-size: 0.75rem; color: #444; } footer a { color: #444; }
 </style>
 </head>
 <body>
 <div class="box">
-<img src="/anubis-dist/img/pensive.webp" class="mascot" id="mascot-img" alt="Guard"
-onerror="this.style.display='none'; document.getElementById('mascot-emoji').style.display='block';">
-<div class="mascot-emoji" id="mascot-emoji">😐</div>
+<img src="/img/anubis/pensive.webp" class="mascot" id="mascot-img" alt="Guard"
+  onerror="this.onerror=null; this.src='${IMG_CHECK_FALLBACK}';">
 <h1>${STRINGS.heading}</h1>
 <p>${STRINGS.description}</p>
 <button id="verify-btn">${STRINGS.btn_start}</button>
@@ -90,12 +81,12 @@ onerror="this.style.display='none'; document.getElementById('mascot-emoji').styl
 const CHALLENGE = "${challenge}";
 const DIFFICULTY = ${DIFFICULTY};
 const ORIGINAL_PATH = "${originalPath}";
-const IMG_CHECK = "/anubis-dist/img/pensive.webp";
-const IMG_SUCCESS = "/anubis-dist/img/happy.webp";
-const IMG_FAILED = "/anubis-dist/img/reject.webp";
-const EMOJI_CHECK = "😐";
-const EMOJI_SUCCESS = "😊";
-const EMOJI_FAILED = "❌";
+const IMG_CHECK = "/img/anubis/pensive.webp";
+const IMG_SUCCESS = "/img/anubis/happy.webp";
+const IMG_FAILED = "/img/anubis/reject.webp";
+const IMG_CHECK_FALLBACK = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/pensive.webp";
+const IMG_SUCCESS_FALLBACK = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/happy.webp";
+const IMG_FAILED_FALLBACK = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/reject.webp";
 const S = {
   calculating: ${JSON.stringify(STRINGS.btn_calculating)},
   verifying: ${JSON.stringify(STRINGS.btn_verifying)},
@@ -105,18 +96,13 @@ const S = {
 };
 const btn = document.getElementById('verify-btn');
 const img = document.getElementById('mascot-img');
-const emoji = document.getElementById('mascot-emoji');
-const usingEmoji = () => img.style.display === 'none';
 
-function setMascot(imgSrc, emojiChar) {
-  if (usingEmoji()) {
-    emoji.innerText = emojiChar;
-  } else {
-    img.src = imgSrc;
-  }
+function setMascot(imgSrc, fallbackSrc) {
+  img.onerror = () => { img.onerror = null; img.src = fallbackSrc; };
+  img.src = imgSrc;
 }
-
-// === Web Worker code (inline via Blob) ===
+  
+// Web Worker code (inline via Blob)
 const WORKER_CODE = \`
 async function sha256(str) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
@@ -145,7 +131,7 @@ function createWorker() {
 
 function mine() {
   btn.disabled = true; btn.innerText = S.calculating;
-  setMascot(IMG_CHECK, EMOJI_CHECK);
+  setMascot(IMG_CHECK, FALLBACKS.check);
 
   const numWorkers = Math.max(1, (navigator.hardwareConcurrency || 4) - 1);
   const workers = [];
@@ -175,27 +161,31 @@ function submit(nonce, response) {
   fetch(window.location.href, { method: 'POST', body: fd }).then(async res => {
     if (res.ok) {
       const data = await res.json();
-      setMascot(IMG_SUCCESS, EMOJI_SUCCESS);
+      setMascot(IMG_SUCCESS, FALLBACKS.success);
       btn.innerText = S.success;
       setTimeout(() => { window.location.href = data.redirect; }, 500);
     } else {
-      setMascot(IMG_FAILED, EMOJI_FAILED);
+      setMascot(IMG_FAILED, FALLBACKS.failed);
       btn.innerText = S.retry; btn.disabled = false;
     }
   }).catch(() => {
-    setMascot(IMG_FAILED, EMOJI_FAILED);
+    setMascot(IMG_FAILED, FALLBACKS.failed);
     btn.innerText = S.error; btn.disabled = false;
   });
 }
 
 btn.addEventListener('click', mine);
 </script>
+<footer>
+<p>Proof-of-Work, modified version of <a href="https://anubis.techaro.lol/">Anubis</a>.</p>
+<p>Copyright Anubis © 2026 Techaro.</p>
+</footer>
 </body>
 </html>
 `;
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  if (SECRET_KEY === "ALBIREO_DEFAULT_SECRET_KEY_CHANGE_ME") {
+  if (SECRET_KEY === "YOUR_KEY_HERE") {
     return new Response("SECURITY ERROR: Please change SECRET_KEY in _middleware.ts", { status: 500 });
   }
 
@@ -203,10 +193,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const url = new URL(request.url);
   const ua = (request.headers.get("User-Agent") || "").toLowerCase();
 
-  // 1. Pass static assets（含 xml, rss, atom）
-  if (url.pathname.match(/\.(png|jpg|jpeg|gif|webp|css|js|ico|svg|json|xml|rss|atom)$/) || url.pathname.startsWith("/anubis-dist/")) {
-    return next();
-  }
+if (
+  url.pathname.match(
+    /\.(png|jpg|jpeg|gif|webp|avif|heic|heif|ico|svg|bmp|tiff|tif|css|js|mjs|jsx|ts|tsx|map|json|xml|rss|atom|txt|pdf|csv|yaml|yml|toml|woff|woff2|ttf|otf|eot|mp4|webm|ogv|mov|avi|mkv|m4v|mp3|wav|ogg|flac|aac|m4a|opus|zip|tar|gz|7z|wasm|md|markdown|htaccess|webmanifest)$/i
+  )
+) {
+  return next();
+}
 
   // 2. Pass SEO bots
   if (BOT_AGENTS.some(b => ua.includes(b))) return next();

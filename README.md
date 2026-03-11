@@ -3,7 +3,8 @@
 A **serverless Proof-of-Work (PoW) protection** for static websites on **Cloudflare Pages**, based on [Anubis](https://github.com/TecharoHQ/anubis). 
 
 It is **not intended to defeat highly resourced or targeted scraping operations**.
----
+
+***
 
 ## Setup
 1. Copy the `functions` folder to your Cloudflare Pages project  

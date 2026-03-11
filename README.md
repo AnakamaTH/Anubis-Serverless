@@ -1,4 +1,4 @@
-# Serverless Anubis for Cloudflare Pages
+# [Serverless Anubis for Cloudflare Pages](https://anubis-serverless.pages.dev/)
 
 A **serverless Proof-of-Work (PoW) protection** for static websites on **Cloudflare Pages**, based on [Anubis](https://github.com/TecharoHQ/anubis). 
 

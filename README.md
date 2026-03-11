@@ -11,7 +11,7 @@ It is **not intended to defeat highly resourced or targeted scraping operations*
    - `pensive.webp`  
    - `happy.webp`  
    - `reject.webp`  
-4. Optionally add a favicon to `/img/anubis/favicon.png`
+4. Optionally add a favicon to `/favicon.png`
 
 > If you don't have images, the security check page will automatically fall back to the Anubis mascot, so the protection works out of the box without any setup.
 ---

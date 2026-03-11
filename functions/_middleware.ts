@@ -21,10 +21,10 @@ const STRINGS = {
   btn_error: "Error",
 };
 
-// Fallback image URLs (used when local /img/anubis/ assets are unavailable)
-const IMG_FALLBACK_CHECK   = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/pensive.webp";
-const IMG_FALLBACK_SUCCESS = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/happy.webp";
-const IMG_FALLBACK_FAILED  = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/reject.webp";
+// Image URLs
+const IMG_CHECK   = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/pensive.webp";
+const IMG_SUCCESS = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/happy.webp";
+const IMG_FAILED  = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/reject.webp";
 
 // Crypto Utils
 async function sign(msg: string): Promise<string> {
@@ -45,14 +45,12 @@ async function checkPoW(challenge: string, nonce: string, response: string, diff
   const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(msg));
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const calculated = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
   if (calculated !== response) return false;
   const prefix = "0".repeat(difficulty);
   if (!calculated.startsWith(prefix)) return false;
   return true;
 }
 
-// Safe Redirect Validator
 function safeRedirect(path: string): string {
   try {
     if (path.startsWith('/') && !path.startsWith('//')) return path;
@@ -60,8 +58,7 @@ function safeRedirect(path: string): string {
   return '/';
 }
 
-// HTML Generator
-const GENERATE_HTML = (challenge: string, originalPath: string) => `
+const GENERATE_HTML = (challenge: string, originalPath: string, domain: string) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,15 +67,28 @@ const GENERATE_HTML = (challenge: string, originalPath: string) => `
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <link rel="icon" href="/img/anubis/favicon.png" type="image/png" />
 <title>${STRINGS.title}</title>
-<link rel="preload" href="https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/pensive.webp" as="image" />
+<link rel="preload" href="${IMG_CHECK}" as="image" />
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; } body { background: #0d0d0d; color: #e0e0e0; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; gap: 16px; } .box { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 32px; max-width: 380px; width: 100%; } .mascot { width: 100%; max-width: 256px; height: auto; display: block; } h1 { font-size: 1.25rem; font-weight: bold; color: #ffffff; text-align: center; } p { font-size: 0.85rem; color: #888; text-align: center; max-width: 300px; line-height: 1.6; } button { background: #1a0000; color: #e0e0e0; border: 1px solid #8b0000; padding: 11px 32px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; cursor: pointer; width: 100%; } button:hover:not(:disabled) { background: #8b0000; color: #ffffff; } button:disabled { opacity: 0.5; cursor: default; } footer { position: fixed; bottom: 16px; font-size: 0.75rem; color: #444; } footer a { color: #444; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0d0d0d; color: #e0e0e0; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; gap: 16px; }
+.box { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 32px; max-width: 380px; width: 100%; }
+.domain-badge { display: flex; align-items: center; gap: 6px; background: #110000; border: 1px solid #8b0000; border-radius: 20px; padding: 5px 14px; font-size: 0.78rem; color: #cc4444; letter-spacing: 0.03em; }
+.domain-badge::before { content: ''; display: inline-block; width: 6px; height: 6px; background: #8b0000; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.mascot { width: 100%; max-width: 256px; height: auto; display: block; }
+h1 { font-size: 1.25rem; font-weight: bold; color: #ffffff; text-align: center; }
+p { font-size: 0.85rem; color: #888; text-align: center; max-width: 300px; line-height: 1.6; }
+button { background: #1a0000; color: #e0e0e0; border: 1px solid #8b0000; padding: 11px 32px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; cursor: pointer; width: 100%; }
+button:hover:not(:disabled) { background: #8b0000; color: #ffffff; }
+button:disabled { opacity: 0.5; cursor: default; }
+footer { position: fixed; bottom: 16px; font-size: 0.75rem; color: #444; text-align: center; }
+footer a { color: #444; }
 </style>
 </head>
 <body>
 <div class="box">
-<img src="/img/anubis/pensive.webp" class="mascot" id="mascot-img" alt="Guard"
-  onerror="this.onerror=null; this.src=${JSON.stringify(IMG_FALLBACK_CHECK)};">
+<div class="domain-badge">🔒 ${domain}</div>
+<img src="${IMG_CHECK}" class="mascot" id="mascot-img" alt="Guard">
 <h1>${STRINGS.heading}</h1>
 <p>${STRINGS.description}</p>
 <button id="verify-btn">${STRINGS.btn_start}</button>
@@ -87,14 +97,9 @@ const GENERATE_HTML = (challenge: string, originalPath: string) => `
 const CHALLENGE = ${JSON.stringify(challenge)};
 const DIFFICULTY = ${DIFFICULTY};
 const ORIGINAL_PATH = ${JSON.stringify(originalPath)};
-const IMG_CHECK   = "/img/anubis/pensive.webp";
-const IMG_SUCCESS = "/img/anubis/happy.webp";
-const IMG_FAILED  = "/img/anubis/reject.webp";
-const FALLBACKS = {
-  check:   ${JSON.stringify(IMG_FALLBACK_CHECK)},
-  success: ${JSON.stringify(IMG_FALLBACK_SUCCESS)},
-  failed:  ${JSON.stringify(IMG_FALLBACK_FAILED)},
-};
+const IMG_CHECK   = ${JSON.stringify(IMG_CHECK)};
+const IMG_SUCCESS = ${JSON.stringify(IMG_SUCCESS)};
+const IMG_FAILED  = ${JSON.stringify(IMG_FAILED)};
 const S = {
   calculating: ${JSON.stringify(STRINGS.btn_calculating)},
   verifying:   ${JSON.stringify(STRINGS.btn_verifying)},
@@ -105,18 +110,15 @@ const S = {
 const btn = document.getElementById('verify-btn');
 const img = document.getElementById('mascot-img');
 
-function setMascot(imgSrc, fallbackSrc) {
-  img.onerror = () => { img.onerror = null; img.src = fallbackSrc; };
-  img.src = imgSrc;
+function setMascot(src) {
+  img.src = src;
 }
 
-// Web Worker code (inline via Blob)
 const WORKER_CODE = \`
 async function sha256(str) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
-
 self.onmessage = async (e) => {
   const { challenge, difficulty, startNonce, step } = e.data;
   const prefix = "0".repeat(difficulty);
@@ -139,12 +141,10 @@ function createWorker() {
 
 function mine() {
   btn.disabled = true; btn.innerText = S.calculating;
-  setMascot(IMG_CHECK, FALLBACKS.check);
-
+  setMascot(IMG_CHECK);
   const numWorkers = Math.max(1, (navigator.hardwareConcurrency || 4) - 1);
   const workers = [];
   let done = false;
-
   for (let i = 0; i < numWorkers; i++) {
     const worker = createWorker();
     workers.push(worker);
@@ -165,19 +165,18 @@ function submit(nonce, response) {
   fd.append('response', response);
   fd.append('verify', 'true');
   fd.append('original_path', ORIGINAL_PATH);
-
   fetch(window.location.href, { method: 'POST', body: fd }).then(async res => {
     if (res.ok) {
       const data = await res.json();
-      setMascot(IMG_SUCCESS, FALLBACKS.success);
+      setMascot(IMG_SUCCESS);
       btn.innerText = S.success;
       setTimeout(() => { window.location.href = data.redirect; }, 500);
     } else {
-      setMascot(IMG_FAILED, FALLBACKS.failed);
+      setMascot(IMG_FAILED);
       btn.innerText = S.retry; btn.disabled = false;
     }
   }).catch(() => {
-    setMascot(IMG_FAILED, FALLBACKS.failed);
+    setMascot(IMG_FAILED);
     btn.innerText = S.error; btn.disabled = false;
   });
 }
@@ -186,7 +185,6 @@ btn.addEventListener('click', mine);
 </script>
 <footer>
 <p>Proof-of-Work, modified version of <a href="https://anubis.techaro.lol/">Anubis</a>.</p>
-<!-- FIX 3: Closed missing </p> tag -->
 <p>Mascot design by <a href="https://bsky.app/profile/celphase.bsky.social">CELPHASE</a>.</p>
 <p>Copyright Anubis © 2026 Techaro.</p>
 </footer>
@@ -203,7 +201,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const url = new URL(request.url);
   const ua = (request.headers.get("User-Agent") || "").toLowerCase();
 
-  // 1. Pass static assets
+  if (url.hostname.endsWith('.pages.dev')) {
+    return Response.redirect('https://anakama.xyz' + url.pathname + url.search, 301);
+  }
+
   if (
     url.pathname.match(
       /\.(png|jpg|jpeg|gif|webp|avif|heic|heif|ico|svg|bmp|tiff|tif|css|js|mjs|jsx|ts|tsx|map|json|xml|rss|atom|txt|pdf|csv|yaml|yml|toml|woff|woff2|ttf|otf|eot|mp4|webm|ogv|mov|avi|mkv|m4v|mp3|wav|ogg|flac|aac|m4a|opus|zip|tar|gz|7z|wasm|md|markdown|htaccess|webmanifest)$/i
@@ -212,14 +213,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     return next();
   }
 
-  // 2. Pass SEO bots
   if (BOT_AGENTS.some(b => ua.includes(b))) return next();
 
-  // 3. Check Cookie
   const cookie = request.headers.get("Cookie") || "";
   if (cookie.includes("anubis_solved=true")) return next();
 
-  // 4. Handle POST
   if (request.method === "POST") {
     try {
       const fd = await request.formData();
@@ -232,7 +230,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cStr = cookie.split(';').find(c => c.trim().startsWith('anubis_challenge='));
       if (!cStr) return new Response("Expired", { status: 403 });
 
-      // FIX: Preserve base64 '=' padding in cookie value
       const rawCookie = decodeURIComponent(cStr.trim().split('=').slice(1).join('='));
       const dotIndex1 = rawCookie.indexOf('.');
       const dotIndex2 = rawCookie.indexOf('.', dotIndex1 + 1);
@@ -260,17 +257,17 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
   }
 
-  // 5. Issue Challenge
   const rnd = crypto.randomUUID().replace(/-/g, '');
   const timestamp = Date.now().toString();
   const payload = rnd + '.' + timestamp;
   const sig = await sign(payload);
   const originalPath = safeRedirect(url.pathname + url.search + url.hash);
+  const domain = url.hostname;
 
   const headers = new Headers();
   headers.set("Content-Type", "text/html");
   headers.set("Cache-Control", "private, no-cache, no-store, must-revalidate");
   headers.set("Set-Cookie", `anubis_challenge=${encodeURIComponent(payload + '.' + sig)}; Path=/; HttpOnly; Secure; SameSite=Lax`);
 
-  return new Response(GENERATE_HTML(rnd, originalPath), { headers });
+  return new Response(GENERATE_HTML(rnd, originalPath, domain), { headers });
 };

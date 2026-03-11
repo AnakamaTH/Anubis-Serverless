@@ -1,5 +1,0 @@
-# netlify.toml
-
-[[edge_functions]]
-  path = "/*"
-  function = "albireo"

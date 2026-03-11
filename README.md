@@ -1,9 +1,9 @@
-# Serverless Anubis
-**Serverless Anubis** is a **serverless Proof-of-Work (PoW) protection** for static websites on **Cloudflare Pages**, based on [Anubis](https://github.com/TecharoHQ/anubis). 
+# Serverless Anubis for Cloudflare Pages
+A **serverless Proof-of-Work (PoW) protection** for static websites on **Cloudflare Pages**, based on [Anubis](https://github.com/TecharoHQ/anubis). 
 It is **not intended to defeat highly resourced or targeted scraping operations**.
 ---
 
-## Setup (Cloudflare Pages)
+## Setup
 1. Copy the `functions` folder to your Cloudflare Pages project  
 2. Change `SECRET_KEY` in `_middleware.ts`  
 3. Add Images: Create `/img/anubis/` and add your own:  
@@ -27,4 +27,5 @@ It is **not intended to defeat highly resourced or targeted scraping operations*
 ---
 
 ## License
-MIT (Based on [Anubis](https://github.com/TecharoHQ/anubis) by TecharoHQ)
+- MIT (Based on [Anubis](https://github.com/TecharoHQ/anubis) by TecharoHQ)
+- Improved fork of [Albireo](https://github.com/51511/Albireo).

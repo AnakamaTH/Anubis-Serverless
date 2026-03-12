@@ -7,7 +7,7 @@ It is **not intended to defeat highly resourced or targeted scraping operations*
 ## Setup
 1. Copy the `functions` folder to your Cloudflare Pages project  
 2. Change `SECRET_KEY` in `_middleware.ts`  
-3. Add Images: Create `/img/anubis/` and add your own:  
+3. Optionally add Images: Create `/img/anubis/` and add your own:  
    - `pensive.webp`  
    - `happy.webp`  
    - `reject.webp`  
@@ -25,6 +25,9 @@ It is **not intended to defeat highly resourced or targeted scraping operations*
 | `BOT_AGENTS` | List of user agent substrings to whitelist (SEO bots) | Google, Bing, Yahoo, DuckDuckBot |
 | `CHALLENGE_TTL` | How long a challenge is valid (milliseconds) | `300000` (5 min) |
 | `STRINGS` | UI text for all labels and button states (for localization) | English |
+
+> If you want do disable automatic verification and want the user to manually click the button, replace `document.addEventListener('DOMContentLoaded', mine);` with `btn.addEventListener('click', mine);`
+
 ---
 
 ## License

@@ -87,7 +87,7 @@ footer a { color: #444; }
 </head>
 <body>
 <div class="box">
-<div class="domain-badge">🔒 ${domain}</div>
+<div class="domain-badge">${domain}</div>
 <img src="${IMG_CHECK}" class="mascot" id="mascot-img" alt="Guard">
 <h1>${STRINGS.heading}</h1>
 <p>${STRINGS.description}</p>
@@ -181,7 +181,7 @@ function submit(nonce, response) {
   });
 }
 
-btn.addEventListener('click', mine);
+document.addEventListener('DOMContentLoaded', mine);
 </script>
 <footer>
 <p>Proof-of-Work, modified version of <a href="https://anubis.techaro.lol/">Anubis</a>.</p>

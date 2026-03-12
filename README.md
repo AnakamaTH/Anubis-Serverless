@@ -26,4 +26,4 @@ It is **not intended to defeat highly resourced or targeted scraping operations*
 
 ## License
 - MIT (Based on [Anubis](https://github.com/TecharoHQ/anubis) by TecharoHQ)
-- Improved fork of [Albireo](https://github.com/51511/Albireo).
+- Improved fork of [Albireo](https://github.com/51511/Albireo). (I don't know if it was vibecoded.)

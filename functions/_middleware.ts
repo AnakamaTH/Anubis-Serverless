@@ -68,7 +68,6 @@ const GENERATE_HTML = (challenge: string, originalPath: string, domain: string) 
 <link rel="icon" href="/favicon.png" type="image/png" />
 <title>${STRINGS.title}</title>
 <link rel="preload" href="${IMG_CHECK}" as="image" />
-<link rel="preload" href="${IMG_HAPPY}" as="image" />
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #0d0d0d; color: #e0e0e0; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; gap: 16px; }

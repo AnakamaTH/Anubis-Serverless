@@ -5,7 +5,7 @@ interface Env {
 // Configuration
 const DIFFICULTY = 3;
 const SECRET_KEY = "YOUR_KEY_HERE";
-const BOT_AGENTS = ["google", "bingbot", "yahoo", "duckduckbot"];
+const BOT_AGENTS = ["google", "bingbot", "yahoo", "duckduckbot", "discordbot"];
 const CHALLENGE_TTL = 5 * 60 * 1000;
 
 // UI Strings

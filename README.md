@@ -26,7 +26,7 @@ It is **not intended to defeat highly resourced or targeted scraping operations*
 | `CHALLENGE_TTL` | How long a challenge is valid (milliseconds) | `300000` (5 min) |
 | `STRINGS` | UI text for all labels and button states (for localization) | English |
 
-> If you want do disable automatic verification and want the user to manually click the button, replace `document.addEventListener('DOMContentLoaded', mine);` with `btn.addEventListener('click', mine);`
+> If you want to disable automatic verification and want the user to manually click the button, replace `document.addEventListener('DOMContentLoaded', mine);` with `btn.addEventListener('click', mine);`
 
 ---
 

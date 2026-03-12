@@ -1,6 +1,6 @@
 # Serverless Anubis
 
-A **serverless Proof-of-Work (PoW) protection** for static websites on **Cloudflare Pages**, based on [Anubis](https://github.com/TecharoHQ/anubis). 
+**Serverless Proof-of-Work (PoW) protection** for static websites on **Cloudflare Pages**, fan project of [Anubis](https://github.com/TecharoHQ/anubis). 
 
 It is **not intended to defeat highly resourced or targeted scraping operations**.
 

@@ -19,7 +19,6 @@ It is **not intended to defeat highly resourced or targeted scraping operations*
 | `SECRET_KEY` | HMAC signing key. **Must be changed before deployment** | — |
 | `BOT_AGENTS` | List of user agent substrings to whitelist (SEO bots) | Google, Bing, Yahoo, DuckDuckBot, DiscordBot |
 | `CHALLENGE_TTL` | How long a challenge is valid (milliseconds) | `300000` (5 min) |
-| `STRINGS` | UI text for all labels and button states (for localization) | English |
 
 > If you want to disable automatic verification and want the user to manually click the button, replace `document.addEventListener('DOMContentLoaded', mine);` with `btn.addEventListener('click', mine);`
 

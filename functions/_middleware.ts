@@ -11,8 +11,8 @@ const CHALLENGE_TTL = 5 * 60 * 1000;
 // UI Strings
 const STRINGS = {
   title: "Security Check",
-  heading: "Security Check",
-  description: "Please verify you are human.",
+  heading: "Making sure you are not a bot!",
+  description: "Please wait a moment while we ensure the security of your connection.",
   btn_start: "I am human",
   btn_calculating: "Calculating...",
   btn_verifying: "Verifying...",

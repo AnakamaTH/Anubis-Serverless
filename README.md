@@ -4,6 +4,13 @@
 
 It is **not intended to defeat highly resourced or targeted scraping operations**.
 
+## Features
+- Auto-solve on page load
+- Domain badge
+- Fixed cookie base64 padding bug
+- Fixed XSS vulnerabilities
+- Overall improvements
+
 ## Setup
 1. Add the [`_middleware.ts`](https://raw.githubusercontent.com/AnakamaTH/Anubis-Serverless/refs/heads/main/functions/_middleware.ts) file to your project's `functions` folder.
 2. Change `SECRET_KEY` in `_middleware.ts`  

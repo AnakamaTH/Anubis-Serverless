@@ -21,6 +21,11 @@ const STRINGS = {
   btn_error: "Error",
 };
 
+// Image URLs - replace with your own hosted images
+const IMG_CHECK   = "https://anakama.xyz/assets/anubis/pensive.webp";
+const IMG_SUCCESS = "https://anakama.xyz/assets/anubis/happy.webp";
+const IMG_FAILED  = "https://anakama.xyz/assets/anubis/reject.webp";
+
 // Crypto Utils
 async function sign(msg: string): Promise<string> {
   const enc = new TextEncoder();
@@ -92,10 +97,9 @@ footer a { color: #444; }
 const CHALLENGE = ${JSON.stringify(challenge)};
 const DIFFICULTY = ${DIFFICULTY};
 const ORIGINAL_PATH = ${JSON.stringify(originalPath)};
-// Image URLs
-const IMG_CHECK   = "https://anakama.xyz/assets/anubis/pensive.webp";
-const IMG_SUCCESS = "https://anakama.xyz/assets/anubis/happy.webp";
-const IMG_FAILED  = "https://anakama.xyz/assets/anubis/reject.webp";
+const IMG_CHECK   = ${JSON.stringify(IMG_CHECK)};
+const IMG_SUCCESS = ${JSON.stringify(IMG_SUCCESS)};
+const IMG_FAILED  = ${JSON.stringify(IMG_FAILED)};
 const S = {
   calculating: ${JSON.stringify(STRINGS.btn_calculating)},
   verifying:   ${JSON.stringify(STRINGS.btn_verifying)},

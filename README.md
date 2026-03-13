@@ -16,8 +16,7 @@ It is **not intended to defeat highly resourced or targeted scraping operations*
 2. Change `SECRET_KEY` in `_middleware.ts`  
 3. Optionally add Images: Change the image links in the URLs section in `_middleware.ts`
 4. Optionally add a favicon to `/favicon.png`
----
-
+   
 ## Configuration
 
 | Option | Description | Default |

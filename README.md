@@ -28,8 +28,6 @@ It is **not intended to defeat highly resourced or targeted scraping operations*
 
 > If you want to disable automatic verification and want the user to manually click the button, replace `document.addEventListener('DOMContentLoaded', mine);` with `btn.addEventListener('click', mine);`
 
----
-
 ## License
 - MIT (Based on [Anubis](https://github.com/TecharoHQ/anubis) by TecharoHQ)
 - Improved fork of [Albireo](https://github.com/51511/Albireo).

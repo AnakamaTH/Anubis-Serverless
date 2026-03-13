@@ -21,11 +21,6 @@ const STRINGS = {
   btn_error: "Error",
 };
 
-// Image URLs
-const IMG_CHECK   = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/pensive.webp";
-const IMG_SUCCESS = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/happy.webp";
-const IMG_FAILED  = "https://anubis.techaro.lol/.within.website/x/cmd/anubis/static/img/reject.webp";
-
 // Crypto Utils
 async function sign(msg: string): Promise<string> {
   const enc = new TextEncoder();

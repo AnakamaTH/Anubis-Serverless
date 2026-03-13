@@ -92,9 +92,10 @@ footer a { color: #444; }
 const CHALLENGE = ${JSON.stringify(challenge)};
 const DIFFICULTY = ${DIFFICULTY};
 const ORIGINAL_PATH = ${JSON.stringify(originalPath)};
-const IMG_CHECK   = ${JSON.stringify(IMG_CHECK)};
-const IMG_SUCCESS = ${JSON.stringify(IMG_SUCCESS)};
-const IMG_FAILED  = ${JSON.stringify(IMG_FAILED)};
+// Image URLs
+const IMG_CHECK   = "https://anakama.xyz/assets/anubis/pensive.webp";
+const IMG_SUCCESS = "https://anakama.xyz/assets/anubis/happy.webp";
+const IMG_FAILED  = "https://anakama.xyz/assets/anubis/reject.webp";
 const S = {
   calculating: ${JSON.stringify(STRINGS.btn_calculating)},
   verifying:   ${JSON.stringify(STRINGS.btn_verifying)},

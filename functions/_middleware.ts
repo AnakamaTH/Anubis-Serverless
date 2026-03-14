@@ -5,7 +5,8 @@ interface Env {
 // Configuration
 const DIFFICULTY = 3;
 const SECRET_KEY = "YOUR_KEY_HERE";
-const BOT_AGENTS = ["google", "bingbot", "yahoo", "duckduckbot", "discordbot"];
+const ALLOW_AGENTS = ["google", "bingbot", "yahoo", "duckduckbot", "discordbot", "whatsapp", "curl", "mastodon", "twitterbot", "applebot", "telegrambot", "slackbot", "linkedinbot"];
+const BLOCK_AGENTS = ["gptbot", "claudebot", "claudeweb", "anthropic-ai", "ccbot", "bytespider", "gemini-ai", "google-extended", "chatgpt-user", "oai-searchbot"]; 
 const CHALLENGE_TTL = 5 * 60 * 1000;
 
 // UI Strings
@@ -68,6 +69,8 @@ const GENERATE_HTML = (challenge: string, originalPath: string, domain: string) 
 <link rel="icon" href="/favicon.png" type="image/png" />
 <title>${STRINGS.title}</title>
 <link rel="preload" href="${IMG_CHECK}" as="image" />
+<link rel="preload" href="${IMG_HAPPY}" as="image" />
+<link rel="preload" href="${IMG_REJECT}" as="image" />
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #0d0d0d; color: #e0e0e0; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; gap: 16px; }
@@ -184,7 +187,7 @@ function submit(nonce, response) {
 document.addEventListener('DOMContentLoaded', mine);
 </script>
 <footer>
-<p>Proof-of-Work, modified version of <a href="https://anubis.techaro.lol/">Anubis</a>.</p>
+<p>Unofficial, serverless version of <a href="https://anubis.techaro.lol/">Anubis</a>.</p>
 <p>Mascot design by <a href="https://bsky.app/profile/celphase.bsky.social">CELPHASE</a>.</p>
 <p>Copyright Anubis © 2026 Techaro.</p>
 </footer>
@@ -210,8 +213,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     return next();
   }
 
-  // 2. Pass SEO bots
-  if (BOT_AGENTS.some(b => ua.includes(b))) return next();
+  // 2. Pass and block bots
+  if (ALLOW_AGENTS.some(b => ua.includes(b))) return next();
+  if (BLOCK_AGENTS.some(b => ua.includes(b))) return new Response("Acces Denied", { status: 403 });
 
   // 3. Check Cookie
   const cookie = request.headers.get("Cookie") || "";

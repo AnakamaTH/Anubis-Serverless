@@ -21,7 +21,7 @@ const STRINGS = {
   btn_error: "Error",
 };
 
-// Image URLs - replace with your own hosted images
+// Image URLs
 const IMG_CHECK   = "https://anakama.xyz/assets/anubis/pensive.webp";
 const IMG_SUCCESS = "https://anakama.xyz/assets/anubis/happy.webp";
 const IMG_FAILED  = "https://anakama.xyz/assets/anubis/reject.webp";

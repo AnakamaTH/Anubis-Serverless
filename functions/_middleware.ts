@@ -69,7 +69,7 @@ const GENERATE_HTML = (challenge: string, originalPath: string, domain: string) 
 <link rel="icon" href="/favicon.png" type="image/png" />
 <title>${STRINGS.title}</title>
 <link rel="preload" href="${IMG_CHECK}" as="image" />
-<link rel="preload" href="${IMG_HAPPY}" as="image" />
+<link rel="preload" href="${IMG_SUCCESS}" as="image" />
 <link rel="preload" href="${IMG_FAILED}" as="image" />
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }

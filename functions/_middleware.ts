@@ -215,7 +215,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   // 2. Pass and block bots
   if (ALLOW_AGENTS.some(b => ua.includes(b))) return next();
-  if (BLOCK_AGENTS.some(b => ua.includes(b))) return new Response("Access Denied", { status: 403 });
+  if (BLOCK_AGENTS.some(b => ua.toLowerCase().includes(b))) {
+  return new Response("Access Denied", { status: 403 });
+}
 
   // 3. Check Cookie
   const cookie = request.headers.get("Cookie") || "";

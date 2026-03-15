@@ -66,11 +66,51 @@ const GENERATE_HTML = (challenge: string, originalPath: string, domain: string) 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta property="og:locale" content="en">
+<meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="/favicon.png" type="image/png" />
 <title>${STRINGS.title}</title>
 <link rel="preload" href="${IMG_CHECK}" as="image" />
 <link rel="preload" href="${IMG_SUCCESS}" as="image" />
 <link rel="preload" href="${IMG_FAILED}" as="image" />
+<style>
+        body,
+        html {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .centered-div {
+            text-align: center;
+        }
+
+        #status {
+            font-variant-numeric: tabular-nums;
+        }
+
+        #progress {
+            display: none;
+            width: 90%;
+            width: min(20rem, 90%);
+            height: 2rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            margin: 1rem 0 2rem;
+            outline-offset: 2px;
+            outline: #b16286 solid 4px;
+        }
+
+        .bar-inner {
+            background-color: #b16286;
+            height: 100%;
+            width: 0;
+            transition: width 0.25s ease-in;
+        }
+</style>
 <style>
 :root {
   --body-sans-font: Geist, sans-serif;

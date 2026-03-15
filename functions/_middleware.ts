@@ -99,6 +99,7 @@ button:hover:not(:disabled) { background: #8b0000; color: #ffffff; }
 button:disabled { opacity: 0.5; cursor: default; }
 footer { position: fixed; bottom: 16px; font-size: 0.75rem; color: #444; text-align: center; }
 footer a { color: #444; }
+</style>
 </head>
 <body>
 <div class="box">

@@ -72,8 +72,21 @@ const GENERATE_HTML = (challenge: string, originalPath: string, domain: string) 
 <link rel="preload" href="${IMG_SUCCESS}" as="image" />
 <link rel="preload" href="${IMG_FAILED}" as="image" />
 <style>
+:root {
+  --body-sans-font: monospace;
+  --background: #0d0d0d;
+  --text: #e0e0e0;
+  --text-selection: #8b0000;
+  --preformatted-background: #1a0000;
+  --link-foreground: #cc4444;
+  --link-background: #110000;
+  --blockquote-border-left: 1px solid #8b0000;
+  --progress-bar-outline: #8b0000 solid 4px;
+  --progress-bar-fill: #8b0000;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0d0d0d; color: #e0e0e0; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; gap: 16px; }
+body { background: var(--background); color: var(--text); font-family: var(--body-sans-font); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; gap: 16px; }
 .box { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 32px; max-width: 380px; width: 100%; }
 .domain-badge { display: flex; align-items: center; gap: 6px; background: #110000; border: 1px solid #8b0000; border-radius: 20px; padding: 5px 14px; font-size: 0.78rem; color: #cc4444; letter-spacing: 0.03em; }
 .domain-badge::before { content: ''; display: inline-block; width: 6px; height: 6px; background: #8b0000; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
@@ -81,12 +94,11 @@ body { background: #0d0d0d; color: #e0e0e0; font-family: monospace; display: fle
 .mascot { width: 100%; max-width: 256px; height: auto; display: block; }
 h1 { font-size: 1.25rem; font-weight: bold; color: #ffffff; text-align: center; }
 p { font-size: 0.85rem; color: #888; text-align: center; max-width: 300px; line-height: 1.6; }
-button { background: #1a0000; color: #e0e0e0; border: 1px solid #8b0000; padding: 11px 32px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; cursor: pointer; width: 100%; }
+button { background: #1a0000; color: var(--text); border: 1px solid #8b0000; padding: 11px 32px; border-radius: 4px; font-family: var(--body-sans-font); font-size: 0.9rem; cursor: pointer; width: 100%; }
 button:hover:not(:disabled) { background: #8b0000; color: #ffffff; }
 button:disabled { opacity: 0.5; cursor: default; }
 footer { position: fixed; bottom: 16px; font-size: 0.75rem; color: #444; text-align: center; }
 footer a { color: #444; }
-</style>
 </head>
 <body>
 <div class="box">

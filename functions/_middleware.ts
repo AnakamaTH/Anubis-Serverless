@@ -213,9 +213,9 @@ function submit(nonce, response) {
 document.addEventListener('DOMContentLoaded', mine);
 </script>
 <footer>
-<p>Unofficial, serverless version of <a href="https://anubis.techaro.lol/">Anubis</a> by Anakama.</p>
+<p>Unofficial, serverless version of <a href="https://anubis.techaro.lol/">Anubis</a>.</p>
 <p>Mascot design by <a href="https://bsky.app/profile/celphase.bsky.social">CELPHASE</a>.</p>
-<p>Copyright Anubis © 2026 by Techaro.</p>
+<p>Copyright Anubis © 2026 Techaro.</p>
 </footer>
 </body>
 </html>

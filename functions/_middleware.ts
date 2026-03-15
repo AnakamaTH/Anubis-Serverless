@@ -112,46 +112,23 @@ const GENERATE_HTML = (challenge: string, originalPath: string, domain: string) 
         }
 </style>
 <style>
-:root {
-  --body-sans-font: Geist, sans-serif;
-  --body-preformatted-font: Iosevka Curly Iaso, monospace;
-  --body-title-font: Podkova, serif;
-  --background: #1d2021;
-  --text: #000000;
-  --text-selection: #d3869b;
-  --preformatted-background: #3c3836;
-  --link-foreground: #b16286;
-  --link-background: #282828;
-  --progress-bar-outline: #b16286 solid 4px;
-  --progress-bar-fill: #b16286;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #f9f5d7;
-    --text: #000000;
-    --preformatted-background: #ebdbb2;
-    --link-foreground: #b16286;
-    --link-background: #fbf1c7;
-  }
-}
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--background); color: var(--text); font-family: var(--body-sans-font); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; gap: 16px; }
+body { background: #f9f5d7; color: #000000; font-family: Geist, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; gap: 16px; }
 .box { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 32px; max-width: 380px; width: 100%; }
-.domain-badge { display: flex; align-items: center; gap: 6px; background: var(--link-background); border: 1px solid var(--link-foreground); border-radius: 20px; padding: 5px 14px; font-size: 0.78rem; color: var(--link-foreground); letter-spacing: 0.03em; }
-.domain-badge::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--link-foreground); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 1; } }
+.domain-badge { display: flex; align-items: center; gap: 6px; background: #fbf1c7; border: 1px solid #b16286; border-radius: 20px; padding: 5px 14px; font-size: 0.78rem; color: #b16286; letter-spacing: 0.03em; }
+.domain-badge::before { content: ''; display: inline-block; width: 6px; height: 6px; background: #b16286; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 .mascot { width: 100%; max-width: 256px; height: auto; display: block; }
-h1 { font-family: var(--body-title-font); font-size: 1.25rem; font-weight: bold; color: var(--text); text-align: center; }
-p { font-size: 0.85rem; color: var(--text); opacity: 0.6; text-align: center; max-width: 300px; line-height: 1.6; }
-button { background: var(--link-background); color: var(--text); border: 1px solid var(--link-foreground); padding: 11px 32px; border-radius: 4px; font-family: var(--body-sans-font); font-size: 0.9rem; cursor: pointer; width: 100%; }
-button:hover:not(:disabled) { background: var(--link-foreground); color: var(--background); }
+h1 { font-family: Podkova, serif; font-size: 1.25rem; font-weight: bold; color: #000000; text-align: center; }
+p { font-size: 0.85rem; color: #000000; opacity: 0.6; text-align: center; max-width: 300px; line-height: 1.6; }
+button { background: #fbf1c7; color: #000000; border: 1px solid #b16286; padding: 11px 32px; border-radius: 4px; font-family: Geist, sans-serif; font-size: 0.9rem; cursor: pointer; width: 100%; }
+button:hover:not(:disabled) { background: #b16286; color: #f9f5d7; }
 button:disabled { opacity: 0.5; cursor: default; }
-footer { position: fixed; bottom: 16px; font-size: 0.75rem; color: var(--text); opacity: 1; text-align: center; }
-footer a { color: var(--text); opacity: 0.5; }
-#progress { border-radius: 1rem; display: none; height: 2rem; margin: 1rem 0 2rem; outline: var(--progress-bar-outline); outline-offset: 2px; overflow: hidden; width: min(20rem, 90%); }
-.bar-inner { background-color: var(--progress-bar-fill); height: 100%; width: 0; transition: width .25s ease-in; } body { color: #000000; }
+footer { position: fixed; bottom: 16px; font-size: 0.75rem; color: #000000; opacity: 0.3; text-align: center; }
+footer a { color: #000000; opacity: 0.5; }
+#progress { border-radius: 1rem; display: none; height: 2rem; margin: 1rem 0 2rem; outline: #b16286 solid 4px; outline-offset: 2px; overflow: hidden; width: min(20rem, 90%); }
+.bar-inner { background-color: #b16286; height: 100%; width: 0; transition: width .25s ease-in; }
+a, a:active, a:visited { background-color: #fbf1c7; color: #b16286; }
 </style>
 </head>
 <body>

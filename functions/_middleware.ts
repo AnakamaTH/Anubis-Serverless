@@ -117,7 +117,7 @@ const GENERATE_HTML = (challenge: string, originalPath: string, domain: string) 
   --body-preformatted-font: Iosevka Curly Iaso, monospace;
   --body-title-font: Podkova, serif;
   --background: #1d2021;
-  --text: #f9f5d7;
+  --text: #000000;
   --text-selection: #d3869b;
   --preformatted-background: #3c3836;
   --link-foreground: #b16286;
@@ -129,7 +129,7 @@ const GENERATE_HTML = (challenge: string, originalPath: string, domain: string) 
 @media (prefers-color-scheme: light) {
   :root {
     --background: #f9f5d7;
-    --text: #1d2021;
+    --text: #000000;
     --preformatted-background: #ebdbb2;
     --link-foreground: #b16286;
     --link-background: #fbf1c7;
@@ -151,8 +151,7 @@ button:disabled { opacity: 0.5; cursor: default; }
 footer { position: fixed; bottom: 16px; font-size: 0.75rem; color: var(--text); opacity: 0.3; text-align: center; }
 footer a { color: var(--text); opacity: 0.5; }
 #progress { border-radius: 1rem; display: none; height: 2rem; margin: 1rem 0 2rem; outline: var(--progress-bar-outline); outline-offset: 2px; overflow: hidden; width: min(20rem, 90%); }
-.bar-inner { background-color: var(--progress-bar-fill); height: 100%; width: 0; transition: width .25s ease-in; }
-a, a:active, a:visited { background-color: var(--link-background); color: var(--link-foreground); }
+.bar-inner { background-color: var(--progress-bar-fill); height: 100%; width: 0; transition: width .25s ease-in; } body { color: #000000; }
 </style>
 </head>
 <body>

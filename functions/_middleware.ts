@@ -112,6 +112,7 @@ footer { position: fixed; bottom: 16px; font-size: 0.75rem; color: var(--text); 
 footer a { color: var(--text); opacity: 0.5; }
 #progress { border-radius: 1rem; display: none; height: 2rem; margin: 1rem 0 2rem; outline: var(--progress-bar-outline); outline-offset: 2px; overflow: hidden; width: min(20rem, 90%); }
 .bar-inner { background-color: var(--progress-bar-fill); height: 100%; width: 0; transition: width .25s ease-in; }
+a, a:active, a:visited { background-color: var(--link-background); color: var(--link-foreground); }
 </style>
 </head>
 <body>

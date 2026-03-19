@@ -5,7 +5,7 @@ interface Env {
 // Configuration
 const DIFFICULTY = 3;
 const SECRET_KEY = "YOUR_KEY_HERE";
-const ALLOW_AGENTS = ["google", "bingbot", "yahoo", "duckduckbot", "discordbot", "whatsapp", "curl", "mastodon", "twitterbot", "applebot", "telegrambot", "slackbot", "linkedinbot"];
+const ALLOW_AGENTS = ["google", "bingbot", "yahoo", "duckduckbot", "discordbot", "whatsapp", "curl", "mastodon", "twitterbot", "applebot", "telegrambot", "slackbot", "linkedinbot", "bravebot"];
 const BLOCK_AGENTS = ["gptbot", "claudebot", "claudeweb", "anthropic-ai", "ccbot", "bytespider", "gemini-ai", "google-extended", "chatgpt-user", "oai-searchbot"]; 
 const CHALLENGE_TTL = 5 * 60 * 1000;
 
